@@ -10,7 +10,16 @@ Authors@R: c(
     )
   )
 Description: Database configuration and tools for storing hiking tracks, 
-    bagged peaks, and collected trails
+    bagged peaks, and collected trails.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    DBI,
+    dbplyr,
+    dplyr,
+    glue,
+    pool
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
