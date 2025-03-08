@@ -1,0 +1,16 @@
+Package: databasing4patches
+Type: Package
+Title: Database Tools for Hiking Tracks, Bagged Peaks, and Collected Trails
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Ryan", "Raaum",
+      email = "code@raaum.org",
+      role = c("aut", "cre")
+    )
+  )
+Description: Database configuration and tools for storing hiking tracks, 
+    bagged peaks, and collected trails
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
