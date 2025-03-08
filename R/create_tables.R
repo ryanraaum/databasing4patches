@@ -1,7 +1,5 @@
 
-.create_season_enum <- function(con) {
-  con |> DBI::dbExecute("CREATE TYPE season AS ENUM ('winter', 'spring', 'summer', 'fall')")
-}
+# NOTE: seasons are 1:winter, 2:spring, 3:summer, 4:fall
 
 create_table_functions <- list()
 
@@ -29,7 +27,7 @@ create_table_functions$user_tracks <- .create_user_tracks_table
                           peak_time TIMESTAMP,
                           record_time TIMESTAMP,
                           date_in_ny DATE,
-                          season_in_ny season,
+                          season_in_ny INTEGER,
                           month_in_ny INTEGER
   )")
 }
@@ -43,7 +41,7 @@ create_table_functions$track_peaks <- .create_track_peaks_table
                           point_time TIMESTAMP,
                           record_time TIMESTAMP,
                           date_in_ny DATE,
-                          season_in_ny season,
+                          season_in_ny INTEGER,
                           month_in_ny INTEGER
   )")
 }
@@ -60,9 +58,9 @@ create_table_functions$track_trails <- .create_track_trails_table
 create_table_functions$users <- .create_users_table
 
 # .create_track_trail_times_view <- function(con) {
-#   con |> DBI::dbExecute("CREATE VIEW track_trail_times 
+#   con |> DBI::dbExecute("CREATE VIEW track_trail_times
 #                          AS SELECT t.track_id, trail_id, point_id,
 #                                    date_in_ny, season_in_ny, month_in_ny
-#                          FROM tracks t, track_trails tt 
+#                          FROM tracks t, track_trails tt
 #                          WHERE t.track_id = tt.track_id")
 # }

@@ -17,9 +17,12 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' Create new DB4Patches object
      #'
      #' @param dbargs_list A list of parameters to create the database
-     initialize = function(dbargs_list) {
+     initialize = function(dbargs_list, create_tables=FALSE) {
        # super$initialize()
        self$establish_connection(dbargs_list)
+       if (create_tables) {
+         self$create_tables()
+       }
      },
      #' @description
      #' Create DB4Patches object and connect to a database
@@ -45,6 +48,20 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' Clean up after removal of DB4Patches object
      finalize = function() {
        self$disconnect()
+     },
+     #' @description
+     #' Generate a data frame interface to a database table
+     #'
+     #' @param tbl_name A database table name
+     create_tables = function() {
+       current_tables <- DBI::dbListTables(self$con)
+       proposed_tables <- names(create_table_functions)
+       if (length(intersect(current_tables, proposed_tables)) > 0) {
+         stop("Cannot create tables - database already has tables.")
+       }
+       for (table in proposed_tables) {
+         create_table_functions[[table]](self$con)
+       }
      },
      #' @description
      #' Generate a data frame interface to a database table
