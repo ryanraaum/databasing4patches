@@ -17,6 +17,7 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' Create new DB4Patches object
      #'
      #' @param dbargs_list A list of parameters to create the database
+     #' @param create_tables Create tables in the database (default: FALSE)
      initialize = function(dbargs_list, create_tables=FALSE) {
        # super$initialize()
        self$establish_connection(dbargs_list)
@@ -80,10 +81,18 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
    )
 )
 
-## Nonsense packaging issue function
+##
 # dbplyr *is* used, but indirectly;
 # this just kills an annoying packaging warning
 
+#' Nonsense packaging issue function
+#'
+#' The [dbplyr] package is used, but indirectly. This function exists
+#' only to kill an annoying packaging `check` warning.
+#'
+#' @param con A database connection
+#'
+#' @returns An API version.
 make_dbplyr_warning_go_away <- function(con) {
   dbplyr::dbplyr_edition(con)
 }

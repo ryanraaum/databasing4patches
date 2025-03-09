@@ -1,4 +1,20 @@
 
+#' A stripped down fast GPX file reader
+#'
+#' If you want *ONLY* the tracks in a GPX file - no waypoints,
+#' no routes - this reads that in quickly. Or, at least, a LOT
+#' more quickly than the `gpx` package on CRAN.
+#'
+#' @param gpxfile A path to a GPX file
+#'
+#' @returns A list with a `tracks` sublist
+#' @export
+#'
+#' @examples
+#' gpxfile <- system.file("extdata", "kaaterskill.gpx",
+#'                        package="databasing4patches")
+#' gpxdata <- load_gpx(gpxfile)
+#' gpxdata$tracks[[1]]
 load_gpx <- function(gpxfile) {
   parsedfile <- XML::htmlTreeParse(file = gpxfile,
                          error = function(...) {},

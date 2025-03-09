@@ -1,4 +1,13 @@
 
+#' Make unique hash for GPX track
+#'
+#' @param track A GPX track data frame type object
+#'
+#' @returns A SHA1 hash
+#' @export
+#'
+#' @examples
+#' hashtrack(kaaterskill$tracks[[1]])
 hashtrack <- function(track) {
   KEY_TRACK_COLUMNS <- c("Elevation", "Time", "Latitude", "Longitude")
   assertthat::assert_that(inherits(track, "data.frame"),

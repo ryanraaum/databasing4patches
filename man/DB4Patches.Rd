@@ -41,6 +41,8 @@ Create new DB4Patches object
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{dbargs_list}}{A list of parameters to create the database}
+
+\item{\code{create_tables}}{Create tables in the database (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
