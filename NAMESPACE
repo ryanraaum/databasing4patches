@@ -3,3 +3,4 @@
 export(DB4Patches)
 export(hashtrack)
 export(load_gpx)
+export(make_peak_bagger_function)

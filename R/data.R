@@ -24,3 +24,11 @@
 #' @format ## `huckleberry`
 #' A list with a tracks entry, where tracks is a list of data frames.
 "huckleberry"
+
+#' A few peak locations
+#'
+#' A short demo list of peaks for testing and demonstration purposes.
+#'
+#' @format ## `peaks`
+#' A data frame with peak_id and location.
+"peaks"
