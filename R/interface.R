@@ -70,6 +70,28 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' @param tbl_name A database table name
      tbl = function(tbl_name) {
        return(dplyr::tbl(private$pool, tbl_name))
+     },
+     #' @description
+     #' Check if a track is already in the database
+     #'
+     #' @param track_id The track hash
+     track_exists = function(track_id) {
+       response <- DBI::dbGetQuery(self$con, glue::glue("SELECT track_id FROM tracks WHERE track_id = '{track_id}'"))
+       return(nrow(response) == 1)
+     },
+     #' @description
+     #' Add a track to the database
+     #'
+     #' @param track A GPX-style track data frame
+     add_track = function(track) {
+       track_id <- hashtrack(track)
+       if (!self$track_exists(track_id)) {
+         track_data <- cerealize(track)
+         response <- DBI::dbExecute(self$con, glue::glue("INSERT INTO tracks (track_id, track_data)
+                                                VALUES ('{track_id}', '{track_data}')"))
+         assertthat::are_equal(response, 1)
+       }
+       return(track_id)
      }
    ),
    active = list(

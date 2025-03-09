@@ -25,6 +25,8 @@ Interface for a hiking tracks, bagged peaks, and collected trails database.
 \item \href{#method-db4patches_object-finalize}{\code{DB4Patches$finalize()}}
 \item \href{#method-db4patches_object-create_tables}{\code{DB4Patches$create_tables()}}
 \item \href{#method-db4patches_object-tbl}{\code{DB4Patches$tbl()}}
+\item \href{#method-db4patches_object-track_exists}{\code{DB4Patches$track_exists()}}
+\item \href{#method-db4patches_object-add_track}{\code{DB4Patches$add_track()}}
 \item \href{#method-db4patches_object-clone}{\code{DB4Patches$clone()}}
 }
 }
@@ -114,6 +116,40 @@ Generate a data frame interface to a database table
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{tbl_name}}{A database table name}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-track_exists"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-track_exists}{}}}
+\subsection{Method \code{track_exists()}}{
+Check if a track is already in the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$track_exists(track_id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{track_id}}{The track hash}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-add_track"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-add_track}{}}}
+\subsection{Method \code{add_track()}}{
+Add a track to the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$add_track(track)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{track}}{A GPX-style track data frame}
 }
 \if{html}{\out{</div>}}
 }
