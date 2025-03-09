@@ -15,11 +15,15 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
+    assertthat,
     DBI,
     dbplyr,
+    digest,
     dplyr,
     glue,
+    lubridate,
     pool,
+    tibble,
     XML
 Suggests: 
     testthat (>= 3.0.0)
