@@ -79,3 +79,11 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      }
    )
 )
+
+## Nonsense packaging issue function
+# dbplyr *is* used, but indirectly;
+# this just kills an annoying packaging warning
+
+make_dbplyr_warning_go_away <- function(con) {
+  dbplyr::dbplyr_edition(con)
+}
