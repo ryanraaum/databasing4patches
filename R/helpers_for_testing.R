@@ -24,9 +24,11 @@ make_testpool <- function(dbtype="sqlite", env=parent.frame()) {
 
 make_testdbobj <- function(dbtype="sqlite", env=parent.frame(), create_tables=FALSE) {
   if (dbtype == "sqlite") {
+    requireNamespace("RSQLite", quietly = TRUE)
     dbobj <- DB4Patches$new(list(drv=RSQLite::SQLite(), dbdir=":memory:"),
                             create_tables=create_tables)
   } else if (dbtype == "duckdb") {
+    requireNamespace("duckdb", quietly = TRUE)
     dbobj <- DB4Patches$new(list(drv=duckdb::duckdb(), dbdir=":memory:"),
                             create_tables=create_tables)
   } else {
