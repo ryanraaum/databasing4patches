@@ -6,12 +6,15 @@ supported_databases <- function(just_this_one=NULL) {
 
 make_testpool <- function(dbtype="sqlite", env=parent.frame()) {
   if (dbtype == "sqlite") {
+    requireNamespace("RSQLite", quietly = TRUE)
     testcon <- pool::dbPool(RSQLite::SQLite(), dbdir=":memory:")
   } else if (dbtype == "duckdb") {
+    requireNamespace("duckdb", quietly = TRUE)
     testcon <- pool::dbPool(duckdb::duckdb(), dbdir=":memory:")
   } else {
     stop(glue::glue("not a known dbtype: '{dbtype}'"))
   }
+  requireNamespace("withr", quietly = TRUE)
   withr::defer(
     pool::poolClose(testcon),
     envir = env

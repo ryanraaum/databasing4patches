@@ -28,7 +28,10 @@ Imports:
     tibble,
     XML
 Suggests: 
-    testthat (>= 3.0.0)
+    duckdb,
+    RSQLite,
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
