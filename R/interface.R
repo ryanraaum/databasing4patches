@@ -118,3 +118,18 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
 make_dbplyr_warning_go_away <- function(con) {
   dbplyr::dbplyr_edition(con)
 }
+
+# pool *is* used, but indirectly;
+# this just kills an annoying packaging warning
+
+#' Nonsense packaging issue function
+#'
+#' The [pool] package is used, but indirectly. This function exists
+#' only to kill an annoying packaging `check` warning.
+#'
+#' @param con A database connection
+#'
+#' @returns An API version.
+make_pool_warning_go_away <- function(con) {
+  pool::dbGetInfo(con)
+}
