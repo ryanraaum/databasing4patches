@@ -13,6 +13,6 @@ huckleberry
 }
 \description{
 A (simplified) GPX track file with just the track information for a hike
-to Kaaterskill High Peak. Useful for configuration and testing purposes.
+of the Huckleberry Loop. Useful for configuration and testing purposes.
 }
 \keyword{datasets}

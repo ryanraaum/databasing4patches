@@ -19,7 +19,7 @@
 #' GPX Track File for the Huckleberry Loop
 #'
 #' A (simplified) GPX track file with just the track information for a hike
-#' to Kaaterskill High Peak. Useful for configuration and testing purposes.
+#' of the Huckleberry Loop. Useful for configuration and testing purposes.
 #'
 #' @format ## `huckleberry`
 #' A list with a tracks entry, where tracks is a list of data frames.
