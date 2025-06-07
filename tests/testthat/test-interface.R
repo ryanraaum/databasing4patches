@@ -140,16 +140,35 @@ test_that("add_point_set passes with various optional arguments", {
     this_db <- expect_no_condition(make_testdbobj(db, create_tables=TRUE))
     point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
                       "peaks", lubridate::ymd("1962-01-01"),
-                      single=TRUE, single_type="season"))
+                      single=TRUE))
     point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
                                                           "peaks", lubridate::ymd("1962-01-01"),
-                                                          single=TRUE, single_type="season"))
+                                                          single=TRUE))
     point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
                                                           "peaks", lubridate::ymd("1962-01-01"),
-                                                          single=TRUE, single_type="year"))
+                                                          single=TRUE))
     point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
                                                           "peaks", lubridate::ymd("1962-01-01"),
                                                           depreciated = lubridate::ymd("2020-03-01"),
                                                           notes="Access to private peaks revoked"))
   }
 })
+
+test_that("add_point_set_requirement does not throw error", {
+  for (db in supported_databases()) {
+    this_db <- expect_no_condition(make_testdbobj(db, create_tables=TRUE))
+    # need some peaks in the db
+    peak_ids <- expect_no_error(this_db$add_point_sfdf(peaks))
+    # need a point set in the db
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+                      "peaks", lubridate::ymd("1962-01-01")))
+    # now we can finally add a requirement
+    point_set_requirement_id <- expect_no_error(this_db$add_point_set_requirement(
+      point_set_id, peak_ids[1]))
+    # add a second requiremnt for the same peak, but must be in winter
+    point_set_requirement_id_w <- expect_no_error(this_db$add_point_set_requirement(
+      point_set_id, peak_ids[1], season="winter"))
+
+  }
+})
+

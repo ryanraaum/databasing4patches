@@ -31,6 +31,7 @@ Interface for a hiking tracks, bagged points, and collected trails database.
 \item \href{#method-db4patches_object-add_point}{\code{DB4Patches$add_point()}}
 \item \href{#method-db4patches_object-add_point_sfdf}{\code{DB4Patches$add_point_sfdf()}}
 \item \href{#method-db4patches_object-add_point_set}{\code{DB4Patches$add_point_set()}}
+\item \href{#method-db4patches_object-add_point_set_requirement}{\code{DB4Patches$add_point_set_requirement()}}
 \item \href{#method-db4patches_object-clone}{\code{DB4Patches$clone()}}
 }
 }
@@ -254,7 +255,6 @@ Add a point set to the database
   points_type,
   version,
   single = FALSE,
-  single_type = NA,
   depreciated = NA,
   notes = NA
 )}\if{html}{\out{</div>}}
@@ -269,13 +269,39 @@ Add a point set to the database
 
 \item{\code{version}}{Start date for this version of the point set}
 
-\item{\code{single}}{To be completed within a single time frame}
-
-\item{\code{single_type}}{Time frame of month, season, or year}
+\item{\code{single}}{To be completed within a single year (or contiguous season)}
 
 \item{\code{depreciated}}{Date (if) this version has been superseded/ended}
 
 \item{\code{notes}}{Notes}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-add_point_set_requirement"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-add_point_set_requirement}{}}}
+\subsection{Method \code{add_point_set_requirement()}}{
+Add a point set requirement to the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$add_point_set_requirement(
+  point_set_id,
+  point_id,
+  month = NA,
+  season = NA
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{point_set_id}}{Point set id}
+
+\item{\code{point_id}}{Point id}
+
+\item{\code{month}}{If needs to be completed in a specific month, which?}
+
+\item{\code{season}}{If needs to be completed in a specific season, which?}
 }
 \if{html}{\out{</div>}}
 }

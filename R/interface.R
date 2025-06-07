@@ -183,19 +183,20 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' @param name Point set name
      #' @param points_type "peaks" | "fire towers"
      #' @param version Start date for this version of the point set
-     #' @param single To be completed within a single time frame
-     #' @param single_type Time frame of month, season, or year
+     #' @param single To be completed within a single year (or contiguous season)
+     # @param single_type Time frame of month, season, or year
      #' @param depreciated Date (if) this version has been superseded/ended
      #' @param notes Notes
      add_point_set = function(name, points_type, version,
-                             single=FALSE, single_type=NA,
+                             single=FALSE,
+                             # single_type=NA,
                              depreciated=NA, notes=NA) {
        point_set_id <- uuid::UUIDgenerate()
        points_type <- tolower(points_type)
        assertthat::assert_that(points_type %in% c("peaks", "fire towers"))
-       var_names <- c("point_set_id", "point_set_name", "point_set_type", "point_set_version", "point_set_single", "point_set_single_type", "point_set_depreciated", "point_set_notes")
-       var_targets <- c("'{point_set_id}'", "'{name}'", "'{points_type}'", "'{version}'", "'{single}'", "'{single_type}'", "'{depreciated}'", "'{notes}'")
-       var_values <- c(point_set_id, name, points_type, version, single, single_type, depreciated, notes)
+       var_names <- c("point_set_id", "point_set_name", "point_set_type", "point_set_version", "point_set_single", "point_set_depreciated", "point_set_notes")
+       var_targets <- c("'{point_set_id}'", "'{name}'", "'{points_type}'", "'{version}'", "'{single}'", "'{depreciated}'", "'{notes}'")
+       var_values <- c(point_set_id, name, points_type, version, single, depreciated, notes)
        filled_values <- !is.na(var_values)
        names_for_sql <- paste(var_names[filled_values], collapse=", ")
        targets_for_sql <- paste(var_targets[filled_values], collapse=", ")
@@ -204,6 +205,29 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
                                  VALUES ({targets_for_sql})")))
        assertthat::are_equal(response, 1)
        return(point_set_id)
+     },
+     #' @description
+     #' Add a point set requirement to the database
+     #'
+     #' @param point_set_id Point set id
+     #' @param point_id Point id
+     #' @param month If needs to be completed in a specific month, which?
+     #' @param season If needs to be completed in a specific season, which?
+     add_point_set_requirement = function(point_set_id, point_id,
+                              month=NA, season=NA) {
+       point_set_requirement_id <- uuid::UUIDgenerate()
+
+       var_names <- c("point_set_requirement_id", "point_set_id", "point_id", "point_month", "point_season")
+       var_targets <- c("'{point_set_requirement_id}'", "'{point_set_id}'", "'{point_id}'", "'{month}'", "'{season}'")
+       var_values <- c(point_set_requirement_id, point_set_id, point_id, month, season)
+       filled_values <- !is.na(var_values)
+       names_for_sql <- paste(var_names[filled_values], collapse=", ")
+       targets_for_sql <- paste(var_targets[filled_values], collapse=", ")
+       response <- DBI::dbExecute(self$con,
+                                  glue::glue(glue::glue("INSERT INTO point_set_requirements ({names_for_sql})
+                                 VALUES ({targets_for_sql})")))
+       assertthat::are_equal(response, 1)
+       return(point_set_requirement_id)
      }
    ),
    active = list(
