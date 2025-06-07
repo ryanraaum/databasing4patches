@@ -92,6 +92,90 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
          assertthat::are_equal(response, 1)
        }
        return(track_id)
+     },
+     #' @description
+     #' Check if a peak is already in the database
+     #'
+     #' @param lat The peak latitude
+     #' @param lon The peak longitude
+     #' @param plusminus The plus/minus degree range difference allowed
+     #' @param conn (Internal) Database pool connection
+     peak_exists = function(lat, lon, plusminus=0.01, conn=self$con) {
+       lat_low <- lat - plusminus
+       lat_high <- lat + plusminus
+       lon_low <- lon - plusminus
+       lon_high <- lon + plusminus
+       response <- DBI::dbGetQuery(conn, glue::glue("SELECT peak_id FROM peaks WHERE
+                                                        peak_lat > {lat_low} AND
+                                                        peak_lat < {lat_high} AND
+                                                        peak_lon > {lon_low} AND
+                                                        peak_lon < {lon_high}"))
+       return(nrow(response) == 1)
+     },
+     #' @description
+     #' Add a peak to the database
+     #'
+     #' @param lat Latitude in degrees in WGS84 CRS
+     #' @param lon Longitude in degrees in WGS84 CRS
+     #' @param name Peak name
+     #' @param elev_m Elevation in meters
+     #' @param elev_ft Elevation in feet
+     #' @param conn (Internal) Database pool connection
+     add_peak = function(lat, lon, name=NA, elev_m=NA, elev_ft=NA, conn=self$con) {
+       if (!self$peak_exists(lat, lon, conn=conn)) {
+         peak_id <- uuid::UUIDgenerate()
+         peak_version <- lubridate::ymd("1962-01-01")
+         if (!is.na(elev_m) & is.na(elev_ft)) {
+           elev_ft <- round(elev_m * 3.281)
+         } else if (is.na(elev_m) & !is.na(elev_ft)) {
+           elev_m <- round(elev_ft / 3.281)
+         }
+         var_names <- c("peak_id", "peak_lat", "peak_lon", "peak_elev_m", "peak_elev_ft", "peak_version", "peak_name")
+         var_targets <- c("'{peak_id}'", "'{lat}'", "'{lon}'", "'{elev_m}'", "'{elev_ft}'", "'{peak_version}'", "'{name}'")
+         var_values <- c(peak_id, lat, lon, elev_m, elev_ft, peak_version, name)
+         filled_values <- !is.na(var_values)
+         names_for_sql <- paste(var_names[filled_values], collapse=", ")
+         targets_for_sql <- paste(var_targets[filled_values], collapse=", ")
+         response <- DBI::dbExecute(conn, glue::glue(glue::glue("INSERT INTO peaks ({names_for_sql})
+                                                VALUES ({targets_for_sql})")))
+         assertthat::are_equal(response, 1)
+         return(peak_id)
+       } else {
+         return(NA)
+       }
+     },
+     #' @description
+     #' Add peak(s) in sf data frame to the database
+     #'
+     #' @param sfdf sf data frame
+     #' @param name_col Name of name column
+     #' @param elev_m_col Name of meters elevation column
+     #' @param elev_ft_col Name of feet elevation column
+     add_peak_sfdf = function(sfdf,
+                              name_col=NA,
+                              elev_m_col=NA,
+                              elev_ft_col=NA) {
+       pool::poolWithTransaction(self$con, function(this_conn) {
+         added_peaks <- vector("character", nrow(sfdf))
+         for (i in seq_len(nrow(sfdf))) {
+           this_peak <- sfdf[i,]
+           peak_name <- ifelse(is.na(name_col), NA, sfdf[i, name_col])
+           peak_elev_m <- ifelse(is.na(elev_m_col), NA, sfdf[i, elev_m_col])
+           peak_elev_ft <- ifelse(is.na(elev_ft_col), NA, sfdf[i, elev_ft_col])
+           peak_coords <- sf::st_coordinates(sfdf[i, "geometry"])
+           peak_lat <- peak_coords[1,1]
+           peak_lon <- peak_coords[1,2]
+           added_peaks[i] <- self$add_peak(peak_lat, peak_lon,
+                                           name = peak_name,
+                                           elev_m = peak_elev_m,
+                                           elev_ft = peak_elev_ft,
+                                           conn = this_conn)
+           if (is.na(added_peaks[i])) {
+             stop(glue::glue("Problem adding row {i} to the peaks table."))
+           }
+         }
+         return(added_peaks)
+       })
      }
    ),
    active = list(

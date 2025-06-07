@@ -27,6 +27,9 @@ Interface for a hiking tracks, bagged peaks, and collected trails database.
 \item \href{#method-db4patches_object-tbl}{\code{DB4Patches$tbl()}}
 \item \href{#method-db4patches_object-track_exists}{\code{DB4Patches$track_exists()}}
 \item \href{#method-db4patches_object-add_track}{\code{DB4Patches$add_track()}}
+\item \href{#method-db4patches_object-peak_exists}{\code{DB4Patches$peak_exists()}}
+\item \href{#method-db4patches_object-add_peak}{\code{DB4Patches$add_peak()}}
+\item \href{#method-db4patches_object-add_peak_sfdf}{\code{DB4Patches$add_peak_sfdf()}}
 \item \href{#method-db4patches_object-clone}{\code{DB4Patches$clone()}}
 }
 }
@@ -150,6 +153,91 @@ Add a track to the database
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{track}}{A GPX-style track data frame}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-peak_exists"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-peak_exists}{}}}
+\subsection{Method \code{peak_exists()}}{
+Check if a peak is already in the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$peak_exists(lat, lon, plusminus = 0.01, conn = self$con)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lat}}{The peak latitude}
+
+\item{\code{lon}}{The peak longitude}
+
+\item{\code{plusminus}}{The plus/minus degree range difference allowed}
+
+\item{\code{conn}}{(Internal) Database pool connection}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-add_peak"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-add_peak}{}}}
+\subsection{Method \code{add_peak()}}{
+Add a peak to the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$add_peak(
+  lat,
+  lon,
+  name = NA,
+  elev_m = NA,
+  elev_ft = NA,
+  conn = self$con
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lat}}{Latitude in degrees in WGS84 CRS}
+
+\item{\code{lon}}{Longitude in degrees in WGS84 CRS}
+
+\item{\code{name}}{Peak name}
+
+\item{\code{elev_m}}{Elevation in meters}
+
+\item{\code{elev_ft}}{Elevation in feet}
+
+\item{\code{conn}}{(Internal) Database pool connection}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-db4patches_object-add_peak_sfdf"></a>}}
+\if{latex}{\out{\hypertarget{method-db4patches_object-add_peak_sfdf}{}}}
+\subsection{Method \code{add_peak_sfdf()}}{
+Add peak(s) in sf data frame to the database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{DB4Patches$add_peak_sfdf(
+  sfdf,
+  name_col = NA,
+  elev_m_col = NA,
+  elev_ft_col = NA
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sfdf}}{sf data frame}
+
+\item{\code{name_col}}{Name of name column}
+
+\item{\code{elev_m_col}}{Name of meters elevation column}
+
+\item{\code{elev_ft_col}}{Name of feet elevation column}
 }
 \if{html}{\out{</div>}}
 }
