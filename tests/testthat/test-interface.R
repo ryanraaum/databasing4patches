@@ -127,3 +127,29 @@ test_that("add_point_sfdf line failure rolls back full transaction", {
   }
 })
 
+test_that("add_point_set does not throw error with minimum call", {
+  for (db in supported_databases()) {
+    this_db <- expect_no_condition(make_testdbobj(db, create_tables=TRUE))
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+      "peaks", lubridate::ymd("1962-01-01")))
+  }
+})
+
+test_that("add_point_set passes with various optional arguments", {
+  for (db in supported_databases()) {
+    this_db <- expect_no_condition(make_testdbobj(db, create_tables=TRUE))
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+                      "peaks", lubridate::ymd("1962-01-01"),
+                      single=TRUE, single_type="season"))
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+                                                          "peaks", lubridate::ymd("1962-01-01"),
+                                                          single=TRUE, single_type="season"))
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+                                                          "peaks", lubridate::ymd("1962-01-01"),
+                                                          single=TRUE, single_type="year"))
+    point_set_id <- expect_no_error(this_db$add_point_set("Test Peaks Challenge",
+                                                          "peaks", lubridate::ymd("1962-01-01"),
+                                                          depreciated = lubridate::ymd("2020-03-01"),
+                                                          notes="Access to private peaks revoked"))
+  }
+})

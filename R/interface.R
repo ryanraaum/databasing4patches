@@ -181,17 +181,24 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
      #' Add a point set to the database
      #'
      #' @param name Point set name
-     #' @param type "points" | "fire towers"
+     #' @param points_type "peaks" | "fire towers"
      #' @param version Start date for this version of the point set
      #' @param single To be completed within a single time frame
-     #' @param single_time Time frame of month, season, or year
+     #' @param single_type Time frame of month, season, or year
      #' @param depreciated Date (if) this version has been superseded/ended
      #' @param notes Notes
-     add_point_set = function(name, type, version,
+     add_point_set = function(name, points_type, version,
                              single=FALSE, single_type=NA,
                              depreciated=NA, notes=NA) {
        point_set_id <- uuid::UUIDgenerate()
-
+       points_type <- tolower(points_type)
+       assertthat::assert_that(points_type %in% c("peaks", "fire towers"))
+       var_names <- c("point_set_id", "point_set_name", "point_set_type", "point_set_version", "point_set_single", "point_set_single_type", "point_set_depreciated", "point_set_notes")
+       var_targets <- c("'{point_set_id}'", "'{name}'", "'{points_type}'", "'{version}'", "'{single}'", "'{single_type}'", "'{depreciated}'", "'{notes}'")
+       var_values <- c(point_set_id, name, points_type, version, single, single_type, depreciated, notes)
+       filled_values <- !is.na(var_values)
+       names_for_sql <- paste(var_names[filled_values], collapse=", ")
+       targets_for_sql <- paste(var_targets[filled_values], collapse=", ")
        response <- DBI::dbExecute(self$con,
           glue::glue(glue::glue("INSERT INTO point_sets ({names_for_sql})
                                  VALUES ({targets_for_sql})")))
