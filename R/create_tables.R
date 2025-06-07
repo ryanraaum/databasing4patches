@@ -3,63 +3,63 @@
 
 create_table_functions <- list()
 
-.create_peaks_table <- function(con) {
-  con |> DBI::dbExecute("CREATE TABLE peaks (
-                          peak_id VARCHAR,
-                          peak_lat FLOAT,
-                          peak_lon FLOAT,
-                          peak_elev_m INTEGER,
-                          peak_elev_ft INTEGER,
-                          peak_version TIMESTAMP,
-                          peak_depreciated TIMESTAMP,
-                          peak_name VARCHAR
+.create_points_table <- function(con) {
+  con |> DBI::dbExecute("CREATE TABLE points (
+                          point_id VARCHAR,
+                          point_lat FLOAT,
+                          point_lon FLOAT,
+                          point_elev_m INTEGER,
+                          point_elev_ft INTEGER,
+                          point_version TIMESTAMP,
+                          point_depreciated TIMESTAMP,
+                          point_name VARCHAR
   )")
 }
-create_table_functions$peaks <- .create_peaks_table
+create_table_functions$points <- .create_points_table
 
-.create_peak_sets_table <- function(con) {
-  con |> DBI::dbExecute("CREATE TABLE peak_sets (
-                          peak_set_id VARCHAR,
-                          peak_set_name VARCHAR,
-                          peak_set_type VARCHAR,
-                          peak_set_single BOOLEAN,
-                          peak_set_single_type VARCHAR,
-                          peak_set_version TIMESTAMP,
-                          peak_set_depreciated TIMESTAMP,
-                          peak_set_notes VARCHAR
+.create_point_sets_table <- function(con) {
+  con |> DBI::dbExecute("CREATE TABLE point_sets (
+                          point_set_id VARCHAR,
+                          point_set_name VARCHAR,
+                          point_set_type VARCHAR,
+                          point_set_single BOOLEAN,
+                          point_set_single_type VARCHAR,
+                          point_set_version TIMESTAMP,
+                          point_set_depreciated TIMESTAMP,
+                          point_set_notes VARCHAR
   )")
 }
-create_table_functions$peak_sets <- .create_peak_sets_table
+create_table_functions$point_sets <- .create_point_sets_table
 
-.create_peak_set_requirements_table <- function(con) {
-  con |> DBI::dbExecute("CREATE TABLE peak_set_requirements (
-                          peak_set_id VARCHAR,
-                          peak_set_requirement_id VARCHAR,
-                          peak_id VARCHAR,
-                          peak_month INTEGER,
-                          peak_season VARCHAR
+.create_point_set_requirements_table <- function(con) {
+  con |> DBI::dbExecute("CREATE TABLE point_set_requirements (
+                          point_set_id VARCHAR,
+                          point_set_requirement_id VARCHAR,
+                          point_id VARCHAR,
+                          point_month INTEGER,
+                          point_season VARCHAR
   )")
 }
-create_table_functions$peak_set_requirements <- .create_peak_set_requirements_table
+create_table_functions$point_set_requirements <- .create_point_set_requirements_table
 
-.create_peak_set_completions_table <- function(con) {
-  con |> DBI::dbExecute("CREATE TABLE peak_set_completions (
+.create_point_set_completions_table <- function(con) {
+  con |> DBI::dbExecute("CREATE TABLE point_set_completions (
                           user_id UUID,
-                          peak_set_id VARCHAR,
-                          peak_set_requirement_id VARCHAR,
-                          peak_id VARCHAR,
-                          peak_month INTEGER,
-                          peak_season VARCHAR,
+                          point_set_id VARCHAR,
+                          point_set_requirement_id VARCHAR,
+                          point_id VARCHAR,
+                          point_month INTEGER,
+                          point_season VARCHAR,
                           requirement_completed BOOLEAN DEFAULT false,
-                          track_peak_id VARCHAR
+                          track_point_id VARCHAR
 
   )")
 }
-create_table_functions$peak_set_completions <- .create_peak_set_completions_table
+create_table_functions$point_set_completions <- .create_point_set_completions_table
 
 
 .create_trails_table <- function(con) {
-  # trail_id is hash of trail start coordinates rounded to 2 digits (~110m circle)
+  # trail_id is a 6 character geohash of trail start coordinates
   # trail_depreciated to be set if trail update moves the start of the trail
   con |> DBI::dbExecute("CREATE TABLE trails (
                           trail_id VARCHAR,
@@ -90,19 +90,19 @@ create_table_functions$tracks <- .create_tracks_table
 create_table_functions$user_tracks <- .create_user_tracks_table
 
 
-.create_track_peaks_table <- function(con) {
-  con |> DBI::dbExecute("CREATE TABLE track_peaks (
-                          track_peak_id VARCHAR,
+.create_track_points_table <- function(con) {
+  con |> DBI::dbExecute("CREATE TABLE track_points (
+                          track_point_id VARCHAR,
                           track_id VARCHAR,
-                          peak_id VARCHAR,
-                          peak_time TIMESTAMP,
+                          point_id VARCHAR,
+                          point_time TIMESTAMP,
                           record_time TIMESTAMP,
                           local_date DATE,
                           local_season VARCHAR,
                           local_month INTEGER
   )")
 }
-create_table_functions$track_peaks <- .create_track_peaks_table
+create_table_functions$track_points <- .create_track_points_table
 
 .create_track_trails_table <- function(con) {
   con |> DBI::dbExecute("CREATE TABLE track_trails (

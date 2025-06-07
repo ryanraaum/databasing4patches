@@ -5,7 +5,7 @@
 #' @title DB4Patches Object
 #'
 #' @description
-#' Interface for a hiking tracks, bagged peaks, and collected trails database.
+#' Interface for a hiking tracks, bagged points, and collected trails database.
 #'
 #' @export
 DB4Patches <- R6::R6Class(classname = "db4patches_object",
@@ -94,88 +94,109 @@ DB4Patches <- R6::R6Class(classname = "db4patches_object",
        return(track_id)
      },
      #' @description
-     #' Check if a peak is already in the database
+     #' Check if a point is already in the database
      #'
-     #' @param lat The peak latitude
-     #' @param lon The peak longitude
+     #' @param lat The point latitude
+     #' @param lon The point longitude
      #' @param plusminus The plus/minus degree range difference allowed
      #' @param conn (Internal) Database pool connection
-     peak_exists = function(lat, lon, plusminus=0.01, conn=self$con) {
+     point_exists = function(lat, lon, plusminus=0.01, conn=self$con) {
        lat_low <- lat - plusminus
        lat_high <- lat + plusminus
        lon_low <- lon - plusminus
        lon_high <- lon + plusminus
-       response <- DBI::dbGetQuery(conn, glue::glue("SELECT peak_id FROM peaks WHERE
-                                                        peak_lat > {lat_low} AND
-                                                        peak_lat < {lat_high} AND
-                                                        peak_lon > {lon_low} AND
-                                                        peak_lon < {lon_high}"))
+       response <- DBI::dbGetQuery(conn, glue::glue("SELECT point_id FROM points WHERE
+                                                        point_lat > {lat_low} AND
+                                                        point_lat < {lat_high} AND
+                                                        point_lon > {lon_low} AND
+                                                        point_lon < {lon_high}"))
        return(nrow(response) == 1)
      },
      #' @description
-     #' Add a peak to the database
+     #' Add a point to the database
      #'
      #' @param lat Latitude in degrees in WGS84 CRS
      #' @param lon Longitude in degrees in WGS84 CRS
-     #' @param name Peak name
+     #' @param name point name
      #' @param elev_m Elevation in meters
      #' @param elev_ft Elevation in feet
      #' @param conn (Internal) Database pool connection
-     add_peak = function(lat, lon, name=NA, elev_m=NA, elev_ft=NA, conn=self$con) {
-       if (!self$peak_exists(lat, lon, conn=conn)) {
-         peak_id <- uuid::UUIDgenerate()
-         peak_version <- lubridate::ymd("1962-01-01")
+     add_point = function(lat, lon, name=NA, elev_m=NA, elev_ft=NA, conn=self$con) {
+       if (!self$point_exists(lat, lon, conn=conn)) {
+         point_id <- uuid::UUIDgenerate()
+         point_version <- lubridate::ymd("1962-01-01")
          if (!is.na(elev_m) & is.na(elev_ft)) {
            elev_ft <- round(elev_m * 3.281)
          } else if (is.na(elev_m) & !is.na(elev_ft)) {
            elev_m <- round(elev_ft / 3.281)
          }
-         var_names <- c("peak_id", "peak_lat", "peak_lon", "peak_elev_m", "peak_elev_ft", "peak_version", "peak_name")
-         var_targets <- c("'{peak_id}'", "'{lat}'", "'{lon}'", "'{elev_m}'", "'{elev_ft}'", "'{peak_version}'", "'{name}'")
-         var_values <- c(peak_id, lat, lon, elev_m, elev_ft, peak_version, name)
+         var_names <- c("point_id", "point_lat", "point_lon", "point_elev_m", "point_elev_ft", "point_version", "point_name")
+         var_targets <- c("'{point_id}'", "'{lat}'", "'{lon}'", "'{elev_m}'", "'{elev_ft}'", "'{point_version}'", "'{name}'")
+         var_values <- c(point_id, lat, lon, elev_m, elev_ft, point_version, name)
          filled_values <- !is.na(var_values)
          names_for_sql <- paste(var_names[filled_values], collapse=", ")
          targets_for_sql <- paste(var_targets[filled_values], collapse=", ")
-         response <- DBI::dbExecute(conn, glue::glue(glue::glue("INSERT INTO peaks ({names_for_sql})
+         response <- DBI::dbExecute(conn, glue::glue(glue::glue("INSERT INTO points ({names_for_sql})
                                                 VALUES ({targets_for_sql})")))
          assertthat::are_equal(response, 1)
-         return(peak_id)
+         return(point_id)
        } else {
          return(NA)
        }
      },
      #' @description
-     #' Add peak(s) in sf data frame to the database
+     #' Add point(s) in sf data frame to the database
      #'
      #' @param sfdf sf data frame
      #' @param name_col Name of name column
      #' @param elev_m_col Name of meters elevation column
      #' @param elev_ft_col Name of feet elevation column
-     add_peak_sfdf = function(sfdf,
+     add_point_sfdf = function(sfdf,
                               name_col=NA,
                               elev_m_col=NA,
                               elev_ft_col=NA) {
        pool::poolWithTransaction(self$con, function(this_conn) {
-         added_peaks <- vector("character", nrow(sfdf))
+         added_points <- vector("character", nrow(sfdf))
          for (i in seq_len(nrow(sfdf))) {
-           this_peak <- sfdf[i,]
-           peak_name <- ifelse(is.na(name_col), NA, sfdf[i, name_col])
-           peak_elev_m <- ifelse(is.na(elev_m_col), NA, sfdf[i, elev_m_col])
-           peak_elev_ft <- ifelse(is.na(elev_ft_col), NA, sfdf[i, elev_ft_col])
-           peak_coords <- sf::st_coordinates(sfdf[i, "geometry"])
-           peak_lat <- peak_coords[1,1]
-           peak_lon <- peak_coords[1,2]
-           added_peaks[i] <- self$add_peak(peak_lat, peak_lon,
-                                           name = peak_name,
-                                           elev_m = peak_elev_m,
-                                           elev_ft = peak_elev_ft,
+           this_point <- sfdf[i,]
+           point_name <- ifelse(is.na(name_col), NA, sfdf[i, name_col])
+           point_elev_m <- ifelse(is.na(elev_m_col), NA, sfdf[i, elev_m_col])
+           point_elev_ft <- ifelse(is.na(elev_ft_col), NA, sfdf[i, elev_ft_col])
+           point_coords <- sf::st_coordinates(sfdf[i, "geometry"])
+           point_lat <- point_coords[1,1]
+           point_lon <- point_coords[1,2]
+           added_points[i] <- self$add_point(point_lat, point_lon,
+                                           name = point_name,
+                                           elev_m = point_elev_m,
+                                           elev_ft = point_elev_ft,
                                            conn = this_conn)
-           if (is.na(added_peaks[i])) {
-             stop(glue::glue("Problem adding row {i} to the peaks table."))
+           if (is.na(added_points[i])) {
+             stop(glue::glue("Problem adding row {i} to the points table."))
            }
          }
-         return(added_peaks)
+         return(added_points)
        })
+     },
+     #' @description
+     #' Add a point set to the database
+     #'
+     #' @param name Point set name
+     #' @param type "points" | "fire towers"
+     #' @param version Start date for this version of the point set
+     #' @param single To be completed within a single time frame
+     #' @param single_time Time frame of month, season, or year
+     #' @param depreciated Date (if) this version has been superseded/ended
+     #' @param notes Notes
+     add_point_set = function(name, type, version,
+                             single=FALSE, single_type=NA,
+                             depreciated=NA, notes=NA) {
+       point_set_id <- uuid::UUIDgenerate()
+
+       response <- DBI::dbExecute(self$con,
+          glue::glue(glue::glue("INSERT INTO point_sets ({names_for_sql})
+                                 VALUES ({targets_for_sql})")))
+       assertthat::are_equal(response, 1)
+       return(point_set_id)
      }
    ),
    active = list(
